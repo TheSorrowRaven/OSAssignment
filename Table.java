@@ -62,6 +62,9 @@ public class Table {
         this.inputText = inputText;
         drawTable(allText);
     }
+    public Table(ArrayList<String[]> allTextArr, String inputText){
+        this(allTextArr.toArray(new String[0][]), inputText);
+    }
     public String[] getTextArr(){
         return tableText.toArray(new String[0]);
     }
@@ -75,6 +78,12 @@ public class Table {
         for (int i = 0; i < allText.length; i++){
             String[] rowTexts = allText[i];
             for (int j = 0; j < rowTexts.length; j++){
+                if (rowTexts[j] == null){
+                    if (maxLengthColumn.size() == j){
+                        maxLengthColumn.add(1);
+                    }
+                    continue;
+                }
                 int stringLength = rowTexts[j].length() + 2;    //+2 Padding
                 if (maxLengthColumn.size() == j){
                     maxLengthColumn.add(stringLength);
@@ -111,6 +120,9 @@ public class Table {
         boolean doInput = false;
         if (hasInput){
             for (int i = 0; i < cellTexts.length; i++){
+                if (cellTexts[i] == null){
+                    continue;
+                }
                 if (cellTexts[i].equals(inputText)){
                     doInput = true;
                 }
