@@ -2,6 +2,7 @@ public class Scheduling {
 
     public String[][] input;
     public Process[] processes;
+    public boolean isDefault = false;
 
     public int quantum;
 
