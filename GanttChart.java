@@ -64,17 +64,18 @@ public class GanttChart extends Table {
 
     @Override
     protected void drawTable(String[][] allText){
+        ExtendTableText(1);
         super.drawTable(allText);
+        ExtendTableText(1);
 
-        //Move down
+        
+        //Hello There
 
     }
 
     @Override
     protected void drawCell(CellType cellType, String text, int maxLength, boolean doInput){
-        ExtendTableText(1);
         super.drawCell(cellType, text, maxLength, doInput);
-        ExtendTableText(1);
     }
 
 }
