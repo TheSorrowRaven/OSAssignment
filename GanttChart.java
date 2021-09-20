@@ -64,9 +64,8 @@ public class GanttChart extends Table {
 
     @Override
     protected void drawTable(String[][] allText){
-        ExtendTableText(1);
+        super.ExtendTableText(3);
         super.drawTable(allText);
-        ExtendTableText(1);
 
         
         //Hello There
@@ -76,6 +75,12 @@ public class GanttChart extends Table {
     @Override
     protected void drawCell(CellType cellType, String text, int maxLength, boolean doInput){
         super.drawCell(cellType, text, maxLength, doInput);
+        textRows = 3;
+    }
+
+    @Override
+    protected void ExtendTableText(int amount){
+
     }
 
 }
