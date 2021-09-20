@@ -2,13 +2,13 @@ import java.util.ArrayList;
 
 public class Table {
     
-    private enum RowType{
+    protected enum RowType{
         top,
         mid,
         bottom,
         single  //one row per table
     }
-    private enum CellType{
+    protected enum CellType{
         topLeft,
         top,
         topRight,
@@ -30,16 +30,23 @@ public class Table {
         single  //single cell per table
     }
 
-    private final int columns;
+    protected int columns;
 
     public ArrayList<String> tableText = new ArrayList<String>();
-    private Integer[] maxLengthPerColumn;
+    protected Integer[] maxLengthPerColumn;
 
     private int textRows = 0;
 
     private boolean hasInput;
     private String inputText;
     private boolean foundInput;
+
+    protected boolean padding = true;
+
+    //Only calls from GanttChart
+    protected Table(){
+        
+    }
 
     public Table(String[][] allText){
         if (allText.length == 0){
@@ -69,7 +76,7 @@ public class Table {
         return tableText.toArray(new String[0]);
     }
 
-    private void drawTable(String[][] allText){
+    protected void drawTable(String[][] allText){
         if (allText.length == 0){
             CLI.log("!Empty Table!");
             return;
@@ -84,7 +91,7 @@ public class Table {
                     }
                     continue;
                 }
-                int stringLength = rowTexts[j].length() + 2;    //+2 Padding
+                int stringLength = rowTexts[j].length() + (padding ? 2 : 0);    //+2 Padding
                 if (maxLengthColumn.size() == j){
                     maxLengthColumn.add(stringLength);
                     continue;
@@ -105,7 +112,7 @@ public class Table {
         drawRow(RowType.bottom, allText[allText.length - 1]);
     }
 
-    private void drawRow(RowType type, String[] cellTexts){
+    protected void drawRow(RowType type, String[] cellTexts){
         int length = cellTexts.length;
         if (length == 0){
             CLI.log("!No columns?!");
@@ -160,7 +167,7 @@ public class Table {
             break;
         }
     }
-    private void drawRowStandard(CellType left, CellType mid, CellType right, String[] text, boolean doInput){
+    protected void drawRowStandard(CellType left, CellType mid, CellType right, String[] text, boolean doInput){
         int length = text.length;
         drawCell(left, text[0], maxLengthPerColumn[0], doInput);
         for (int i = 1; i < length - 1; i++){
@@ -169,7 +176,17 @@ public class Table {
         drawCell(right, text[length - 1], maxLengthPerColumn[length - 1], doInput);
     }
 
-    private void drawCell(CellType cellType, String text, int maxLength, boolean doInput){
+    private String formatText(boolean foundInput, int totalLength, String text){
+        return formatText(foundInput, totalLength, text, '\0', true);
+    }
+    private String formatText(boolean foundInput, int totalLength, String text, char line){
+        return formatText(foundInput, totalLength, text, line, false);
+    }
+    private String formatText(boolean foundInput, int totalLength, String text, char line, boolean space){
+        return (foundInput ? " " : String.format("%" + (totalLength - (space ? 1 : 2) + (padding ? 0 : 1)) + "s" + (padding ? " " : ""), text + (space ? line : "")) + (space ? "" : line));
+    }
+
+    protected void drawCell(CellType cellType, String text, int maxLength, boolean doInput){
 
         if (hasInput && foundInput){
             return;
@@ -181,7 +198,7 @@ public class Table {
         }
 
         int totalLength = maxLength + 1;
-        
+
         int a, b, c;
         switch (cellType){
             case topLeft:
@@ -189,38 +206,38 @@ public class Table {
                 a = textRows;
                 b = textRows + 1;
                 tableText.set(a, tableText.get(a) + Lines.thick().upperLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text));
                 break;
             case top:
                 a = textRows - 2;
                 b = textRows - 1;
                 tableText.set(a, tableText.get(a) + Lines.thick().horizontalDown() + repeat(totalLength - 1, Lines.thick().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text));
                 break;
             case topRight:
                 a = textRows - 2;
                 b = textRows - 1;
                 tableText.set(a, tableText.get(a) + Lines.thick().horizontalDown() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().upperRightCorner());
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 break;
             case midLeft:
                 ExtendTableText(2);
                 a = textRows;
                 b = textRows + 1;
                 tableText.set(a, tableText.get(a) + Lines.thick().verticalRight() + repeat(totalLength - 1, Lines.thin().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text));
                 break;
             case mid:
                 a = textRows - 2;
                 b = textRows - 1;
                 tableText.set(a, tableText.get(a) + Lines.thin().plus() + repeat(totalLength - 1, Lines.thin().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text));
                 break;
             case midRight:
                 a = textRows - 2;
                 b = textRows - 1;
                 tableText.set(a, tableText.get(a) + Lines.thin().plus() + repeat(totalLength - 1, Lines.thin().horizontal()) + Lines.thick().verticalLeft());
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 break;
             case bottomLeft:
                 ExtendTableText(doInput ? 2 : 3);
@@ -228,7 +245,7 @@ public class Table {
                 b = textRows + 1;
                 c = textRows + 2;
                 tableText.set(a, tableText.get(a) + Lines.thick().verticalRight() + repeat(totalLength - 1, Lines.thin().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().lowerLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()));
                 break;
@@ -238,7 +255,7 @@ public class Table {
                 b = textRows - 2 + diff;
                 c = textRows - 1 + diff;
                 tableText.set(a, tableText.get(a) + Lines.thin().plus() + repeat(totalLength - 1, Lines.thin().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().horizontalUp() + repeat(totalLength - 1, Lines.thick().horizontal()));
                 break;
@@ -248,7 +265,7 @@ public class Table {
                 b = textRows - 2 + diff;
                 c = textRows - 1 + diff;
                 tableText.set(a, tableText.get(a) + Lines.thin().plus() + repeat(totalLength - 1, Lines.thin().horizontal()) + Lines.thick().verticalLeft());
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().horizontalUp() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().lowerRightCorner());
                 break;
@@ -258,7 +275,7 @@ public class Table {
                 b = textRows + 1;
                 c = textRows + 2;
                 tableText.set(a, tableText.get(a) + Lines.thick().upperLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().lowerLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()));
                 break;
@@ -268,7 +285,7 @@ public class Table {
                 b = textRows - 2 + diff;
                 c = textRows - 1 + diff;
                 tableText.set(a, tableText.get(a) + Lines.thick().horizontalDown() + repeat(totalLength - 1, Lines.thick().horizontal()));
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text)));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().horizontalUp() + repeat(totalLength - 1, Lines.thick().horizontal()));
                 break;
@@ -278,7 +295,7 @@ public class Table {
                 b = textRows - 2 + diff;
                 c = textRows - 1 + diff;
                 tableText.set(a, tableText.get(a) + Lines.thick().horizontalDown() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().upperRightCorner());
-                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thin().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().horizontalUp() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().lowerRightCorner());
                 break;
@@ -287,14 +304,14 @@ public class Table {
                 a = textRows;
                 b = textRows + 1;
                 tableText.set(a, tableText.get(a) + Lines.thick().upperLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().upperRightCorner());
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 break;
             case midSingleColumn:
                 ExtendTableText(2);
                 a = textRows;
                 b = textRows + 1;
                 tableText.set(a, tableText.get(a) + Lines.thick().verticalRight() + repeat(totalLength - 1, Lines.thin().horizontal()) + Lines.thick().verticalLeft());
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 break;
             case bottomSingleColumn:
                 ExtendTableText(hasInput ? 2 : 3);
@@ -302,7 +319,7 @@ public class Table {
                 b = textRows + 1;
                 c = textRows + 2;
                 tableText.set(a, tableText.get(a) + Lines.thick().verticalRight() + repeat(totalLength - 1, Lines.thin().horizontal()) + Lines.thick().verticalLeft());
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().lowerLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().lowerRightCorner());
                 break;
@@ -312,7 +329,7 @@ public class Table {
                 b = textRows + 1;
                 c = textRows + 2;
                 tableText.set(a, tableText.get(a) + Lines.thick().upperLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().upperRightCorner());
-                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + (foundInput ? " " : String.format("%" + (totalLength - 2) + "s ", text) + Lines.thick().vertical()));
+                tableText.set(b, tableText.get(b) + Lines.thick().vertical() + formatText(foundInput, totalLength, text, Lines.thick().vertical()));
                 if (doInput) break;
                 tableText.set(c, tableText.get(c) + Lines.thick().lowerLeftCorner() + repeat(totalLength - 1, Lines.thick().horizontal()) + Lines.thick().lowerRightCorner());
                 break;
@@ -324,7 +341,7 @@ public class Table {
             tableText.add("");
         }
     }
-    private static String repeat(int count, char with) {
+    protected static String repeat(int count, char with) {
         return new String(new char[count]).replace('\0', with);
     }
 

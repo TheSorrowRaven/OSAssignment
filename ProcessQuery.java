@@ -38,12 +38,13 @@ public class ProcessQuery {
             if (fails > 0){
                 System.out.println("'" + input + "' is not a proper value. Please try again");
             }
-            CLI.print("Enter Quantum: ");
+            CLI.print("Enter Quantum (integer larger than 0): ");
             try{
                 input = CLI.in.nextLine();
                 quantum = Integer.parseInt(input);
-
-                return quantum;
+                if (quantum > 0){
+                    return quantum;
+                }
             }
             catch (Exception e){
             }
@@ -57,7 +58,7 @@ public class ProcessQuery {
         while (true){
             String[] newProcess = new String[total];
             text2d.add(newProcess);
-            newProcess[0] = "P" + totalProcesses;
+            newProcess[0] = "P" + (totalProcesses + (Main.startFrom0 ? 0 : 1));
             boolean finish = false;
             for (int i = 1; i < newProcess.length; i++){
                 newProcess[i] = inputString;
@@ -109,29 +110,31 @@ public class ProcessQuery {
         return scheduling;
     }
     private static void fillDefaultProcessesPriority(ArrayList<String[]> text2d){
-        text2d.add(new String[]{"P0", "6", "0", "3"});
-        text2d.add(new String[]{"P1", "4", "1", "3"});
-        text2d.add(new String[]{"P2", "6", "5", "1"});
-        text2d.add(new String[]{"P3", "6", "6", "1"});
-        text2d.add(new String[]{"P4", "6", "7", "5"});
-        text2d.add(new String[]{"P5", "6", "8", "6"});
+        int val = Main.startFrom0 ? 0 : 1;
+        text2d.add(new String[]{"P" + val++, "6", "0", "3"});
+        text2d.add(new String[]{"P" + val++, "4", "1", "3"});
+        text2d.add(new String[]{"P" + val++, "6", "5", "1"});
+        text2d.add(new String[]{"P" + val++, "6", "6", "1"});
+        text2d.add(new String[]{"P" + val++, "6", "7", "5"});
+        text2d.add(new String[]{"P" + val++, "6", "8", "6"});
     }
     private static void fillDefaultProcesses(ArrayList<String[]> text2d){
-        text2d.add(new String[]{"P0", "6", "0"});
-        text2d.add(new String[]{"P1", "4", "1"});
-        text2d.add(new String[]{"P2", "6", "5"});
-        text2d.add(new String[]{"P3", "6", "6"});
-        text2d.add(new String[]{"P4", "6", "7"});
-        text2d.add(new String[]{"P5", "6", "8"});
+        int val = Main.startFrom0 ? 0 : 1;
+        text2d.add(new String[]{"P" + val++, "6", "0"});
+        text2d.add(new String[]{"P" + val++, "4", "1"});
+        text2d.add(new String[]{"P" + val++, "6", "5"});
+        text2d.add(new String[]{"P" + val++, "6", "6"});
+        text2d.add(new String[]{"P" + val++, "6", "7"});
+        text2d.add(new String[]{"P" + val++, "6", "8"});
     }
     
     private static Integer queryCell(ArrayList<String[]> text2d, boolean reInput, String previousInput){
         CLI.clearScreen();
         Table table = new Table(text2d, inputString);
-        CLI.println("Type the values into the table");
+        CLI.println("Type the values into the table (positive integer)");
         CLI.println("Type 'n' to complete table");
         if (reInput){
-            CLI.println("ERROR: '" + previousInput + "' is not an integer!");
+            CLI.println("ERROR: '" + previousInput + "' is not a positive integer!");
         }
         CLI.printArr(table.getTextArr());
         String input = "";
@@ -144,6 +147,9 @@ public class ProcessQuery {
                 return Integer.MAX_VALUE;
             }
             int value = Integer.parseInt(input);
+            if (value < 0){
+                return queryCell(text2d, true, input);
+            }
             return value;
         }
         catch (Exception e){

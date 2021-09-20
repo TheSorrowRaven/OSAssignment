@@ -3,6 +3,7 @@ import java.util.Arrays;
 public class Main{
 
     public static final String specialDefaultCase = "default";
+    public static final boolean startFrom0 = false;
 
     public static void main(String[] args){
         
@@ -54,6 +55,13 @@ public class Main{
         appendResultsToTable(text2d, algorithm.scheduling.processes);
         Table resultsTable = new Table(text2d);
         CLI.printArrln(resultsTable.getTextArr());
+
+        showGanttChart(algorithm);
+    }
+
+    private static void showGanttChart(SchedulingAlgorithm algorithm){
+        GanttChart gc = new GanttChart(algorithm);
+        CLI.printArrln(gc.getTextArr());
     }
 
     private static void appendResultsToTable(String[][] text2d, Process[] processes){

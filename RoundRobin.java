@@ -68,7 +68,7 @@ public class RoundRobin extends SchedulingAlgorithm {
             toAddProcessNextStep = nextProcess; //Add
         }
         ProcessLog log = new ProcessLog(nextProcess, t, nextFinishTime);
-        processLog.add(log);
+        processLogs.add(log);
         processing = true;
 
         return queueEmpty();

@@ -11,13 +11,22 @@ public abstract class SchedulingAlgorithm {
     protected int currentTime = -1;
     protected PriorityQueue<Integer> nextTime = new PriorityQueue<Integer>();
 
-    protected ArrayList<ProcessLog> processLog = new ArrayList<ProcessLog>();
+    protected ProcessLogs processLogs;
     protected ArrayList<Process> completedProcesses = new ArrayList<Process>();
     protected ArrayList<Process> pendingProcesses = new ArrayList<Process>();
-    protected PriorityQueue<Process> unArrivedProcesses = new PriorityQueue<Process>(new PriorityQueue<Process>(5,(a,b) -> a.arrivalTime - b.arrivalTime));
+    protected PriorityQueue<Process> unArrivedProcesses = new PriorityQueue<Process>(new PriorityQueue<Process>(5,(a,b) ->
+    {
+        if (a.arrivalTime == b.arrivalTime){
+
+            return 1;   //Later come in (lower row in the table) means queue behind previous existing process (previous rows)
+        }
+        return a.arrivalTime - b.arrivalTime;
+    }
+    ));
 
     public SchedulingAlgorithm(Scheduling scheduling){
         this.scheduling = scheduling;
+        processLogs = new ProcessLogs(scheduling.processes);
         step = false;
         unitStep = false;
         initialize();
@@ -49,7 +58,7 @@ public abstract class SchedulingAlgorithm {
                 CLI.pressEnter(true);
                 CLI.in.nextLine();
 
-                
+
             }
 
             if (complete){
@@ -143,24 +152,3 @@ public abstract class SchedulingAlgorithm {
     }
 
 }
-
-class ProcessLog{
-
-    public Process process;
-    public int startTime;
-    public int endTime;
-    public int remainingTime;
-
-    public ProcessLog(Process process, int startTime, int endTime){
-        this.process = process;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        remainingTime = process.remainingTime;
-    }
-
-    @Override
-    public String toString(){
-        return process.name + ": " + startTime + " -> " + endTime + "(R: " + remainingTime + ")";
-    }
-}
-
