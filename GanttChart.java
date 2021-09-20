@@ -70,6 +70,7 @@ public class GanttChart extends Table {
 
         
         //Hello There
+        //General Kenobi
 
     }
 
