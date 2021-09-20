@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GanttChart extends Table {
 
@@ -9,6 +10,9 @@ public class GanttChart extends Table {
     private int maxProcessCharacters;
 
     private static final char fillInChar = '.';
+    private HashMap<Integer, Integer> arrivalTimes = new HashMap<Integer, Integer>();
+    private ArrayList<Integer> mainTimes = new ArrayList<Integer>();
+    private int mainTimesIndex = 0;
 
     public GanttChart(SchedulingAlgorithm algorithm){
         super();
@@ -21,14 +25,21 @@ public class GanttChart extends Table {
         ArrayList<Log> logs = processLogs.getStandardizedProcessLogs();
         columns = logs.size();
 
+        if (logs.size() == 0){
+            return;
+        }
+
         String[] row = new String[logs.size()];
+        Log log = null;
         for (int i = 0; i < row.length; i++){
-            Log log = logs.get(i);
+            log = logs.get(i);
             String name = log.getName();
             //TODO if log.geDiff() is 0 aka 0 burst time
             int units = log.getDiff();
             row[i] = fillStringToMaxLength(name, units);
+            mainTimes.add(log.startTime);
         }
+        mainTimes.add(log.endTime);
         String[][] text2d = new String[][]{ row };
 
         drawTable(text2d);
@@ -51,6 +62,10 @@ public class GanttChart extends Table {
         return str + repeat(remaining, fillInChar);
     }
 
+    private void putArrivalTimeAt(int pos, int time){
+        arrivalTimes.put(pos, time);
+    }
+
     private void findProcessMaxCharacters(){
         int maxNumberCharacters = 1;
         for (Process p : scheduling.processes){
@@ -64,19 +79,41 @@ public class GanttChart extends Table {
 
     @Override
     protected void drawTable(String[][] allText){
-        super.ExtendTableText(3);
+        super.ExtendTableText(5);
+        textRows = 1;
         super.drawTable(allText);
 
         
-        //Hello There
-        //General Kenobi
+        //tableText.set(0, "Hello");
+        //tableText.set(4, "Bye");
 
     }
 
     @Override
     protected void drawCell(CellType cellType, String text, int maxLength, boolean doInput){
         super.drawCell(cellType, text, maxLength, doInput);
-        textRows = 3;
+        textRows = 4;
+
+        appendMainTime();
+    }
+
+    private void appendMainTime(){
+        boolean addLast = mainTimesIndex ==  mainTimes.size() - 2;
+        StringBuilder strBuilder = new StringBuilder(tableText.get(4));
+        int initial = strBuilder.length();
+        int totalLength = tableText.get(1).length();
+        int diff = totalLength - initial;
+        if (addLast){
+            int finalVal = mainTimes.get(mainTimes.size() - 1);
+            int digits = finalVal % 10;
+            strBuilder.append(String.format("%-" + (diff - digits) + "s%" + digits + "s", mainTimes.get(mainTimesIndex).toString(), finalVal));
+        }
+        else{
+            strBuilder.append(String.format("%-" + diff + "s", mainTimes.get(mainTimesIndex).toString()));
+        }
+
+        tableText.set(4, strBuilder.toString());
+        mainTimesIndex++;
     }
 
     @Override

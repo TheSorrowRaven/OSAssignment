@@ -35,7 +35,7 @@ public class Table {
     public ArrayList<String> tableText = new ArrayList<String>();
     protected Integer[] maxLengthPerColumn;
 
-    private int textRows = 0;
+    protected int textRows = 0;
 
     private boolean hasInput;
     private String inputText;
