@@ -336,7 +336,7 @@ public class Table {
         }
         textRows = tableText.size();
     }
-    private void ExtendTableText(int amount){
+    protected void ExtendTableText(int amount){
         for (int i = 0; i < amount; i++){
             tableText.add("");
         }

@@ -25,7 +25,9 @@ public class GanttChart extends Table {
         for (int i = 0; i < row.length; i++){
             Log log = logs.get(i);
             String name = log.getName();
-            row[i] = fillStringToMaxLength(name, log.getDiff());
+            //TODO if log.geDiff() is 0 aka 0 burst time
+            int units = log.getDiff();
+            row[i] = fillStringToMaxLength(name, units);
         }
         String[][] text2d = new String[][]{ row };
 
@@ -41,10 +43,11 @@ public class GanttChart extends Table {
         findProcessMaxCharacters();
     }
 
-    private String fillStringToMaxLength(String str, int max){
+    private String fillStringToMaxLength(String str, int units){
         int current = str.length();
-        int actualMax = max + maxProcessCharacters;
+        int actualMax = units * maxProcessCharacters;
         int remaining = actualMax - current;
+        remaining = Math.max(remaining, 0);
         return str + repeat(remaining, fillInChar);
     }
 
@@ -59,9 +62,19 @@ public class GanttChart extends Table {
         maxProcessCharacters = maxNumberCharacters;
     }
 
-    // @Override
-    // protected void drawTable(String[][] allText){
+    @Override
+    protected void drawTable(String[][] allText){
+        super.drawTable(allText);
 
-    // }
+        //Move down
+
+    }
+
+    @Override
+    protected void drawCell(CellType cellType, String text, int maxLength, boolean doInput){
+        ExtendTableText(1);
+        super.drawCell(cellType, text, maxLength, doInput);
+        ExtendTableText(1);
+    }
 
 }
