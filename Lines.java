@@ -2,6 +2,8 @@ public class Lines {
 
     //https://en.wikipedia.org/wiki/Box-drawing_character 
 
+    public static final char verticalDotted = '\u254E';
+
     private static Lines thin;
     private static Lines thick;
     private static final char[] thinChars = new char[]{

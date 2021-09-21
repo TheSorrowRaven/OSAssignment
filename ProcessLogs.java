@@ -21,8 +21,13 @@ public class ProcessLogs{
         for (Process process : allProcesses){
             arrivingProcesses.add(process);
         }
+
+        ProcessLog previous = null;
         for (int i = 0; i < processLogs.size(); i++){
             ProcessLog log = processLogs.get(i);
+            if (i == 0){
+                previous = log;
+            }
             if (log.startTime != lastEndTime){
                 EmptyProcessLog emptyLog = new EmptyProcessLog();
                 emptyLog.startTime = lastEndTime;
@@ -30,9 +35,27 @@ public class ProcessLogs{
                 checkAddArrivingProcesses(emptyLog, arrivingProcesses);
                 standardizedProcessLogs.add(emptyLog);
             }
+
+            boolean skipAdd = false;
+            if (i != 0){
+                if (previous.compress){
+                    if (previous.process == log.process){
+                        previous.endTime = log.endTime;
+                        previous.remainingTime = log.remainingTime;
+                        lastEndTime = log.endTime;
+
+                        log = previous;
+                        skipAdd = true;
+                    }
+                }
+            }
+
             checkAddArrivingProcesses(log, arrivingProcesses);
-            standardizedProcessLogs.add(log);
-            lastEndTime = log.endTime;
+            if (!skipAdd){
+                standardizedProcessLogs.add(log);
+                lastEndTime = log.endTime;
+                previous = log;
+            }
         }
     }
 
@@ -42,6 +65,11 @@ public class ProcessLogs{
 
     private void checkAddArrivingProcesses(Log log, ArrayList<Process> arrivingProcesses){
         ArrayList<ArrivalProcessLog> arrivalProcessLog = new ArrayList<ArrivalProcessLog>();
+        if (log.arrivalProcessLogs != null && log.arrivalProcessLogs.length > 0){
+            for (ArrivalProcessLog apl : log.arrivalProcessLogs){
+                arrivalProcessLog.add(apl);
+            }
+        }
         for (int i = 0; i < arrivingProcesses.size(); i++){
             Process process = arrivingProcesses.get(i);
             if (process.arrivalTime >= log.startTime && process.arrivalTime <= log.endTime){
@@ -98,12 +126,18 @@ class ProcessLog extends Log{
     public Process process;
     public int remainingTime;
 
+    public boolean compress = false;
+
 
     public ProcessLog(Process process, int startTime, int endTime){
         this.process = process;
         this.startTime = startTime;
         this.endTime = endTime;
         remainingTime = process.remainingTime;
+    }
+    public ProcessLog(Process process, int startTime, int endTime, boolean compress){
+        this(process, startTime, endTime);
+        this.compress = compress;
     }
 
     @Override
@@ -115,6 +149,20 @@ class ProcessLog extends Log{
     public String getName() {
         return process.name;
     }
+
+
+    public String getRemainingStr(){
+        String text = process.name + "(" + remainingTime + ")";
+        if (process.hasPriority){
+            text += ""; //TODO
+        }
+        return text;
+    }
+
+    public String getRemainingStrPriority(){
+        return getRemainingStr() + "";  //TODO
+    }
+
 }
 
 class ArrivalProcessLog{
@@ -130,6 +178,14 @@ class ArrivalProcessLog{
     @Override
     public String toString(){
         return process.name + " arrived at " + arrivalTime;
+    }
+
+    public String getArrivingString(){
+        String text = process.name;// + "(" + arrivalTime + ")";
+        if (process.hasPriority){
+            text += ""; //TODO
+        }
+        return text;
     }
 
 }

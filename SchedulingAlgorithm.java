@@ -18,7 +18,7 @@ public abstract class SchedulingAlgorithm {
     {
         if (a.arrivalTime == b.arrivalTime){
 
-            return 1;   //Later come in (lower row in the table) means queue behind previous existing process (previous rows)
+            return -1;   //Later come in (lower row in the table) means queue behind previous existing process (previous rows)
         }
         return a.arrivalTime - b.arrivalTime;
     }
@@ -136,6 +136,7 @@ public abstract class SchedulingAlgorithm {
     protected void movePendingProcessToCompleted(Process process){
         if (pendingProcesses.contains(process)){
             completedProcesses.add(process);
+            pendingProcesses.remove(process);
         }
     }
 
@@ -149,6 +150,61 @@ public abstract class SchedulingAlgorithm {
             }
         }
         return false;
+    }
+
+    protected Process getShortestTime(){
+        if (pendingProcesses.size() == 0){
+            return null;
+        }
+        Process shortestProcess = pendingProcesses.get(0);
+        int shortestProcessVal = shortestProcess.remainingTime;
+        for (int i = 1; i < pendingProcesses.size(); i++){
+            Process p = pendingProcesses.get(i);
+            if (p.remainingTime < shortestProcessVal){
+                shortestProcess = p;
+                shortestProcessVal = p.remainingTime;
+            }
+        }
+        return shortestProcess;
+    }
+
+
+    // protected Process[] getHighestPriority(){
+    //     if (pendingProcesses.size() == 0){
+    //         return null;
+    //     }
+    //     ArrayList<Process> highestPriorityProcesses = new ArrayList<Process>();
+    //     Process firstProcess = pendingProcesses.get(0);
+    //     highestPriorityProcesses.add(firstProcess);
+    //     int priorityVal = firstProcess.priority;
+    //     for (int i = 1; i < pendingProcesses.size(); i++){
+    //         Process p = pendingProcesses.get(i);
+    //         if (p.priority < priorityVal){
+    //             highestPriorityProcesses.clear();
+    //             highestPriorityProcesses.add(p);
+    //             priorityVal = p.priority;
+    //         }
+    //         else if (p.priority == priorityVal){
+    //             highestPriorityProcesses.add(p);
+    //         }
+    //     }
+    //     return highestPriorityProcesses.toArray(new Process[0]);
+    // }
+    
+    protected Process getHighestPriority(){
+        if (pendingProcesses.size() == 0){
+            return null;
+        }
+        Process prioritizedProcess = pendingProcesses.get(0);
+        int priorityVal = prioritizedProcess.priority;
+        for (int i = 1; i < pendingProcesses.size(); i++){
+            Process p = pendingProcesses.get(i);
+            if (p.priority < priorityVal){
+                prioritizedProcess = p;
+                priorityVal = p.priority;
+            }
+        }
+        return prioritizedProcess;
     }
 
 }

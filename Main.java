@@ -35,12 +35,16 @@ public class Main{
                 algorithm = new RoundRobin(scheduling, false, false);
             break;
             case 2:
+                algorithm = new PreemptiveSJF(scheduling, false, false);
             break;
-            case 3: 
+            case 3:
+                algorithm = new NonPreemptiveSJF(scheduling, false, false);
             break;
             case 4:
+                algorithm = new PreemptivePriority(scheduling, false, false);
             break;
             case 5:
+                algorithm = new NonPreemptivePriority(scheduling, false, false);
             break;
         }
         algorithm.simulate();
@@ -48,7 +52,7 @@ public class Main{
     }
 
     private static void showResults(SchedulingAlgorithm algorithm){
-        CLI.clearScreen();
+        //CLI.clearScreen();
         //Show Gantt Chart
 
         String[][] text2d = algorithm.scheduling.input;
