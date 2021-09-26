@@ -154,13 +154,13 @@ class ProcessLog extends Log{
     public String getRemainingStr(){
         String text = process.name + "(" + remainingTime + ")";
         if (process.hasPriority){
-            text += ""; //TODO
+            text += SuperscriptNums.convertStr("" + process.priority);
         }
         return text;
     }
 
     public String getRemainingStrPriority(){
-        return getRemainingStr() + "";  //TODO
+        return getRemainingStr() + SuperscriptNums.convertStr("" + process.priority);
     }
 
 }
@@ -183,7 +183,7 @@ class ArrivalProcessLog{
     public String getArrivingString(){
         String text = process.name;// + "(" + arrivalTime + ")";
         if (process.hasPriority){
-            text += ""; //TODO
+            text += SuperscriptNums.convertStr("" + process.priority);
         }
         return text;
     }
