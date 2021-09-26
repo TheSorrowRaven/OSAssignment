@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class GanttChart extends Table {
 
@@ -14,8 +13,6 @@ public class GanttChart extends Table {
     private HashMap<Integer, ProcessLog> remainingTimes = new HashMap<Integer, ProcessLog>();
     private ArrayList<Integer> mainTimes = new ArrayList<Integer>();
     private int columnIndex = 0;
-
-    private HashMap<ArrivalProcessLog, Integer> arrivalToTextPos = new HashMap<ArrivalProcessLog, Integer>();
 
 
     public GanttChart(SchedulingAlgorithm algorithm){
@@ -103,16 +100,78 @@ public class GanttChart extends Table {
         //tableText.set(0, "Hello");
         //tableText.set(4, "Bye");
 
+        drawArrivalTimes();
     }
 
-    private void addVerticalDottedLines(){
-        for (Map.Entry<ArrivalProcessLog, Integer> pair : arrivalToTextPos.entrySet()){
-            int arrivalTime = pair.getKey().arrivalTime;
-            int pos = pair.getValue();
-            
-            replaceDottedLinesArrivalTime(pos, arrivalTime);
+
+    private void drawArrivalTimes(){
+        String text = tableText.get(4);
+        int length = text.length();
+        StringBuilder timesStrBuilder = new StringBuilder(tableText.get(4));
+        StringBuilder indicatorStrBuilder = new StringBuilder(tableText.get(5));
+        StringBuilder arrivalTimesValueBuilder = new StringBuilder(tableText.get(6));
+        StringBuilder arrivalTimesBuilder = new StringBuilder(tableText.get(7));
+        String append = repeat(length + 1, ' ');
+        indicatorStrBuilder.append(append);
+        arrivalTimesValueBuilder.append(append);
+        arrivalTimesBuilder.append(append);
+
+        ArrayList<StringBuilder> pushedArrivalTimes = new ArrayList<StringBuilder>();
+        pushedArrivalTimes.add(arrivalTimesBuilder);
+
+        for (Integer a : arrivalTimes.keySet()){
+            ArrivalProcessLog[] apLogs = arrivalTimes.get(a);
+            for (ArrivalProcessLog apLog : apLogs){
+                int position = unitPositions.get(apLog.arrivalTime);
+
+                int i = 0;
+                while (true){
+                    StringBuilder addingSB = pushedArrivalTimes.get(i);
+
+                    if (addingSB.charAt(position) != ' '){
+                        pushedArrivalTimes.add(new StringBuilder(append));
+                        super.ExtendTableText(1);
+                        i++;
+                        continue;
+                    }
+                    else{
+                        setStrToBuilder(addingSB, apLog.getArrivingString(), position);
+                        break;
+                    }
+                }
+
+
+                if (timesStrBuilder.charAt(position) == ' '){
+                    timesStrBuilder.setCharAt(position, Lines.verticalDotted);
+                    
+                    setStrToBuilder(arrivalTimesValueBuilder, "[" + apLog.arrivalTime + "]", position - 1);
+                }
+                else{
+                    arrivalTimesValueBuilder.setCharAt(position, Lines.verticalDotted);
+                }
+                indicatorStrBuilder.setCharAt(position, Lines.verticalDotted);
+            }
         }
 
+
+        tableText.set(4, timesStrBuilder.toString());
+        tableText.set(5, indicatorStrBuilder.toString());
+        tableText.set(6, arrivalTimesValueBuilder.toString());
+        for (int i = 0; i < pushedArrivalTimes.size(); i++){
+            tableText.set(7 + i, pushedArrivalTimes.get(i).toString());
+        }
+
+    }
+
+    private void setStrToBuilder(StringBuilder builder, String insert, int startPos){
+        for (int i = 0; i < insert.length(); i++){
+            int iPos = startPos + i;
+            char c = insert.charAt(i);
+            if (builder.length() <= iPos){
+                builder.append(repeat(iPos - builder.length() + 1, ' '));
+            }
+            builder.setCharAt(iPos, c);
+        }
     }
 
     @Override
@@ -122,65 +181,35 @@ public class GanttChart extends Table {
 
         appendMainTime();
         appendRemainingTime();
+        addUnitPositions();
         //appendArrivalTime();
         columnIndex++;
     }
 
-    private void appendArrivalTime(){
-        if (!arrivalTimes.containsKey(columnIndex)){
-            return;
+    private ArrayList<Integer> unitPositions = new ArrayList<Integer>();
+    private int lastUnitPositionIndex = 0;
+    private void addUnitPositions(){
+        
+        boolean last = columnIndex ==  mainTimes.size() - 2;
+        // if (first){
+        //     unitPositions.add(0);
+        // }
+        String text = tableText.get(4);
+        int textLength = text.length();
+        int operatingLength = textLength - lastUnitPositionIndex + (columnIndex > 0 ? 1 : 0);
+
+        int total = operatingLength / multiplyingFactor - (last ? 1 : 0);
+
+        for (int i = 0; i < total; i++){
+            unitPositions.add(lastUnitPositionIndex + (i) * multiplyingFactor);
+        }
+        if (last){
+            unitPositions.add(textLength - 2);
         }
 
-        ArrivalProcessLog[] apLogs = arrivalTimes.get(columnIndex);
-        for (ArrivalProcessLog apLog : apLogs){
-            String text = apLog.getArrivingString();
-            
-            StringBuilder strBuilder = new StringBuilder(tableText.get(7));
-            int textPosition = columnIndex + (strBuilder.length() == 0 ? 0 : 1) + multiplyingFactor * apLog.arrivalTime;
-            CLI.log(strBuilder.length());
-            int requiredSpacing = textPosition - tableText.get(7).length();
-            int stretched = requiredSpacing + text.length();
-            String formatText = "%" + Math.max(stretched, text.length()) + "s";
-            CLI.log(formatText);
-            strBuilder.append(String.format(formatText, text));
-    
-            tableText.set(7, strBuilder.toString());
-
-            arrivalToTextPos.put(apLog, textPosition);
-        }
-
+        lastUnitPositionIndex = textLength;
     }
 
-    private void replaceDottedLinesArrivalTime(int position, int arrivalTime){
-
-        StringBuilder timesStrBuilder = new StringBuilder(tableText.get(4));
-        StringBuilder declutterStrBuilder = new StringBuilder(tableText.get(5));
-        StringBuilder indicatorLineBuilder = new StringBuilder(tableText.get(6));
-        String padding = repeat(tableText.get(7).length(), ' ');
-        indicatorLineBuilder.append(padding);
-        declutterStrBuilder.append(padding);
-
-        declutterStrBuilder.setCharAt(position, Lines.verticalDotted);
-        String timeText = Integer.toString(arrivalTime);
-        if (timesStrBuilder.charAt(position) == ' '){
-            timesStrBuilder.setCharAt(position, Lines.verticalDotted);
-            for (int i = 0; i < timeText.length(); i++){
-                indicatorLineBuilder.setCharAt(position + i, timeText.charAt(i));
-            }
-            
-        }
-        else{
-            indicatorLineBuilder.setCharAt(position, Lines.verticalDotted);
-            for (int i = 0; i < timeText.length(); i++){
-                timesStrBuilder.setCharAt(position + i, timeText.charAt(i));
-            }
-        }
-
-        tableText.set(4, timesStrBuilder.toString());
-        tableText.set(5, declutterStrBuilder.toString());
-        tableText.set(6, indicatorLineBuilder.toString());
-
-    }
 
     private void appendRemainingTime(){
         if (!remainingTimes.containsKey(columnIndex)){
@@ -199,8 +228,6 @@ public class GanttChart extends Table {
 
         tableText.set(0, strBuilder.toString());
     }
-
-    private ArrayList<Integer> unitPositions = new ArrayList<Integer>();
 
     private void appendMainTime(){
         boolean addLast = columnIndex ==  mainTimes.size() - 2;

@@ -11,12 +11,6 @@ public class Main{
 
         processSchedulingChoice(choice);
 
-
-        // Scheduling scheduling = ProcessQuery.query(true, true);
-        // CLI.clearScreen();
-        // Table table = new Table(scheduling.input);
-        // CLI.printArrln(table.getTextArr());
-
     }
 
     private static void processSchedulingChoice(int input){
@@ -52,7 +46,7 @@ public class Main{
     }
 
     private static void showResults(SchedulingAlgorithm algorithm){
-        //CLI.clearScreen();
+        CLI.clearScreen();
         //Show Gantt Chart
 
         String[][] text2d = algorithm.scheduling.input;
