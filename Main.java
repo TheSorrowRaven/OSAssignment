@@ -55,6 +55,24 @@ public class Main{
         CLI.printArrln(resultsTable.getTextArr());
 
         showGanttChart(algorithm);
+        showAverages(algorithm);
+    }
+
+    private static void showAverages(SchedulingAlgorithm algorithm){
+        Process[] processes = algorithm.scheduling.processes;
+        int turnAroundTotal = 0;
+        int waitingTotal = 0;
+        for (Process process : processes){
+            turnAroundTotal += process.turnAroundTime;
+            waitingTotal += process.waitingTime;
+        }
+
+        float turnAroundAvg = (float)turnAroundTotal / processes.length;
+        float waitingAvg = (float)waitingTotal / processes.length;
+
+        CLI.println();
+        CLI.println("Average Turnaround Time : " + turnAroundAvg);
+        CLI.println("Average Waiting Time    : " + waitingAvg);
     }
 
     private static void showGanttChart(SchedulingAlgorithm algorithm){

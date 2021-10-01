@@ -33,6 +33,9 @@ public class CLI {
     public static void println(Object obj){
         outln(obj.toString());
     }
+    public static void println(){
+        out("\n");
+    }
 
     public static void printArr(String[] text){
         for (int i = 0; i < text.length - 1; i++){

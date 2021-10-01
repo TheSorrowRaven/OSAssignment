@@ -71,7 +71,8 @@ public class GanttChart extends Table {
     }
 
     private void checkPutRemainingTimes(int i, Log log){
-        if (log instanceof ProcessLog pLog){
+        if (log instanceof ProcessLog){
+            ProcessLog pLog = (ProcessLog)log;
             if (pLog.remainingTime > 0){
                 remainingTimes.put(i, pLog);
             }
