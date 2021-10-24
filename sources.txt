@@ -1,0 +1,16 @@
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\CLI.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\GanttChart.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\Lines.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\Main.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\NonPreemptivePriority.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\NonPreemptiveSJF.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\PreemptivePriority.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\PreemptiveSJF.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\Process.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\ProcessLogs.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\ProcessQuery.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\RoundRobin.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\Scheduling.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\SchedulingAlgorithm.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\SuperscriptNums.java
+C:\Users\PC\Desktop\Programs\OS\OSAssignment\Table.java

@@ -3,14 +3,30 @@ import java.util.Arrays;
 public class Main{
 
     public static final String specialDefaultCase = "default";
-    public static final boolean startFrom0 = false;
+    public static int startFrom = 0;
 
     public static void main(String[] args){
         
+        checkArgs(args);
+
         int choice = showStartScreen(null);
 
         processSchedulingChoice(choice);
 
+    }
+
+    private static void checkArgs(String[] args){
+        if (args == null || args.length == 0){
+            return;
+        }
+        String fromNumberStr = args[0];
+        try{
+            int num = Integer.parseInt(fromNumberStr);
+            startFrom = num;
+        }
+        catch (Exception e){
+            
+        }
     }
 
     private static void processSchedulingChoice(int input){

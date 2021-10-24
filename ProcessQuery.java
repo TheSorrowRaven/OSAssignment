@@ -58,7 +58,7 @@ public class ProcessQuery {
         while (true){
             String[] newProcess = new String[total];
             text2d.add(newProcess);
-            newProcess[0] = "P" + (totalProcesses + (Main.startFrom0 ? 0 : 1));
+            newProcess[0] = "P" + (totalProcesses + (Main.startFrom));
             boolean finish = false;
             for (int i = 1; i < newProcess.length; i++){
                 newProcess[i] = inputString;
@@ -110,7 +110,7 @@ public class ProcessQuery {
         return scheduling;
     }
     private static void fillDefaultProcessesPriority(ArrayList<String[]> text2d){
-        int val = Main.startFrom0 ? 0 : 1;
+        int val = Main.startFrom;
         text2d.add(new String[]{"P" + val++, "6", "0", "3"});
         text2d.add(new String[]{"P" + val++, "4", "1", "3"});
         text2d.add(new String[]{"P" + val++, "6", "5", "1"});
@@ -119,7 +119,7 @@ public class ProcessQuery {
         text2d.add(new String[]{"P" + val++, "6", "8", "6"});
     }
     private static void fillDefaultProcesses(ArrayList<String[]> text2d){
-        int val = Main.startFrom0 ? 0 : 1;
+        int val = Main.startFrom;
         text2d.add(new String[]{"P" + val++, "6", "0"});
         text2d.add(new String[]{"P" + val++, "4", "1"});
         text2d.add(new String[]{"P" + val++, "6", "5"});

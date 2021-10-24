@@ -12,19 +12,21 @@ public class CLI {
 
     private static void out(String str){
         if (usePrintWriter){
-            pw.print(str);
-            pw.flush();
+            //pw.print(str);
+            //pw.flush();
+            System.console().printf(str);
             return;
         }
         System.out.print(str);
     }
     private static void outln(String str){
         if (usePrintWriter){
-            pw.println(str);
-            pw.flush();
+            //pw.println(str);
+            //pw.flush();
+            System.console().printf(str + "\n");
             return;
         }
-        pw.println(str);
+        System.out.println(str);
     }
 
     public static void print(Object obj){

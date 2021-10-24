@@ -2,7 +2,8 @@ public class Lines {
 
     //https://en.wikipedia.org/wiki/Box-drawing_character 
 
-    public static final char verticalDotted = '\u254E';
+    //public static final char verticalDotted = '\u254E';
+    public static final char verticalDotted = '|';
 
     private static Lines thin;
     private static Lines thick;
@@ -10,7 +11,8 @@ public class Lines {
         '\u2500', '\u2502', '\u250C', '\u2510', '\u2514', '\u2518', '\u251C', '\u2524', '\u252C', '\u2534', '\u253C'
     };
     private static final char[] thickChars = new char[]{
-        '\u2501', '\u2503', '\u250F', '\u2513', '\u2517', '\u251B', '\u2520', '\u2528', '\u252F', '\u2537', '\u254B'
+        //'\u2501', '\u2503', '\u250F', '\u2513', '\u2517', '\u251B', '\u2520', '\u2528', '\u252F', '\u2537', '\u254B'
+        '\u2500', '\u2502', '\u250C', '\u2510', '\u2514', '\u2518', '\u251C', '\u2524', '\u252C', '\u2534', '\u253C'
     };
 
     public static Lines thin(){
