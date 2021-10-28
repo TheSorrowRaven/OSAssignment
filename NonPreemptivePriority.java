@@ -4,7 +4,7 @@ public class NonPreemptivePriority extends NonPreemptiveSJF {
         super(scheduling);
     }
     public NonPreemptivePriority(Scheduling scheduling, boolean step, boolean unitStep){
-        super (scheduling, step, unitStep);
+        super(scheduling, step, unitStep);
     }
 
     @Override

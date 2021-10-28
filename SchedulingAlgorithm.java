@@ -153,6 +153,7 @@ public abstract class SchedulingAlgorithm {
     }
 
     protected Process getShortestTime(){
+        CLI.printArr(pendingProcesses);
         if (pendingProcesses.size() == 0){
             return null;
         }
@@ -167,29 +168,6 @@ public abstract class SchedulingAlgorithm {
         }
         return shortestProcess;
     }
-
-
-    // protected Process[] getHighestPriority(){
-    //     if (pendingProcesses.size() == 0){
-    //         return null;
-    //     }
-    //     ArrayList<Process> highestPriorityProcesses = new ArrayList<Process>();
-    //     Process firstProcess = pendingProcesses.get(0);
-    //     highestPriorityProcesses.add(firstProcess);
-    //     int priorityVal = firstProcess.priority;
-    //     for (int i = 1; i < pendingProcesses.size(); i++){
-    //         Process p = pendingProcesses.get(i);
-    //         if (p.priority < priorityVal){
-    //             highestPriorityProcesses.clear();
-    //             highestPriorityProcesses.add(p);
-    //             priorityVal = p.priority;
-    //         }
-    //         else if (p.priority == priorityVal){
-    //             highestPriorityProcesses.add(p);
-    //         }
-    //     }
-    //     return highestPriorityProcesses.toArray(new Process[0]);
-    // }
     
     protected Process getHighestPriority(){
         if (pendingProcesses.size() == 0){

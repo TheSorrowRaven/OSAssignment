@@ -16,8 +16,8 @@ public class NonPreemptiveSJF extends SchedulingAlgorithm {
     @Override
     protected boolean stepTo(int time) {
         
-        if (processingProcess == null || time == waitForTime){
-            Process shortest = getShortestTime();
+        if (processingProcess == null || time == waitForTime || time >= waitForTime){
+            Process shortest = getProcess();
             if (shortest == null){
                 return queueEmpty();
             }

@@ -1,5 +1,6 @@
 
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.IOException;
 
@@ -8,7 +9,7 @@ public class CLI {
     private static final boolean usePrintWriter = true;
 
     public static Scanner in = new Scanner(System.in);
-    private static PrintWriter pw = new PrintWriter(System.out, true);
+    //private static PrintWriter pw = new PrintWriter(System.out, true);
 
     private static void out(String str){
         if (usePrintWriter){
@@ -49,6 +50,24 @@ public class CLI {
         for (int i = 0; i < text.length; i++){
             println(text[i]);
         }
+    }
+    public static <T> void printArr(T[] text){
+        if (text.length == 0){
+            return;
+        }
+        for (int i = 0; i < text.length - 1; i++){
+            println(text[i]);
+        }
+        print(text[text.length - 1]);
+    }
+    public static <T> void printArr(ArrayList<T> text){
+        if (text.isEmpty()){
+            return;
+        }
+        for (int i = 0; i < text.size() - 1; i++){
+            println(text.get(i));
+        }
+        print(text.get(text.size() - 1));
     }
 
     public static void flushIn(){
