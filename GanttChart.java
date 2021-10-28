@@ -147,7 +147,7 @@ public class GanttChart extends Table {
                     
                     setStrToBuilder(arrivalTimesValueBuilder, "[" + apLog.arrivalTime + "]", position - 1);
                 }
-                else{
+                else if (arrivalTimesValueBuilder.charAt(position) == ' '){
                     arrivalTimesValueBuilder.setCharAt(position, Lines.verticalDotted);
                 }
                 indicatorStrBuilder.setCharAt(position, Lines.verticalDotted);

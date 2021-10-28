@@ -87,7 +87,10 @@ public class Main{
         float waitingAvg = (float)waitingTotal / processes.length;
 
         CLI.println();
+        CLI.println("Total Turnaround Time   : " + turnAroundTotal);
         CLI.println("Average Turnaround Time : " + turnAroundAvg);
+        CLI.println();
+        CLI.println("Total Waiting Time      : " + waitingTotal);
         CLI.println("Average Waiting Time    : " + waitingAvg);
     }
 
